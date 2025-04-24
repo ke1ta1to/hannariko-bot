@@ -1,0 +1,23 @@
+{
+  "name": "hannariko-bot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsc && node dist/main.js' --ext ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ke1ta1to/hannariko-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ke1ta1to/hannariko-bot/issues"
+  },
+  "homepage": "https://github.com/ke1ta1to/hannariko-bot#readme",
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  }
+}
