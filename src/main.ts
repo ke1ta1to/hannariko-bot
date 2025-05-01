@@ -125,9 +125,14 @@ ${JSON.stringify(authors, null, 2)}
         model: "gemini-2.0-flash",
         contents: prompt,
       });
-      let results = [response.text];
+      if (!response.text) {
+        await interaction.editReply({
+          content: "No response generated.",
+        });
+        return;
+      }
       if (response.text.length > 2000) {
-        results = response.text.match(/.{1,2000}/g) || [response.text];
+        const results = response.text.match(/.{1,2000}/g) || [response.text];
         await interaction.editReply({
           content: "メッセージが長すぎるため、分割して送信します。",
         });
