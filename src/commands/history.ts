@@ -3,43 +3,40 @@ import {
   Events,
   Interaction,
   Routes,
+  SharedSlashCommand,
   SlashCommandBuilder,
 } from "discord.js";
 import { HannarikoBot } from "../main";
+import { CommandBase } from "./command-base";
 
-export class HistoryCommand {
-  constructor(private readonly bot: HannarikoBot) {
+export class HistoryCommand extends CommandBase {
+  constructor(protected readonly bot: HannarikoBot) {
+    super(bot);
     this.register();
   }
 
   async register() {
-    const { client, rest } = this.bot;
+    const { client } = this.bot;
 
-    // コマンドの登録
-    const slashCommand = new SlashCommandBuilder()
+    // コマンドの実行
+    // アロー関数を使用してthisのバインドを保持する
+    client.on(Events.InteractionCreate, (interaction) =>
+      this.handleInteraction(interaction)
+    );
+  }
+
+  getSlashCommand(): SharedSlashCommand {
+    return new SlashCommandBuilder()
       .setName("history")
       .setDescription("Get the history of a command")
       .addStringOption((option) =>
         option.setName("プロンプト").setDescription("AIに与えるプロンプト")
       );
-    try {
-      await rest.put(
-        Routes.applicationGuildCommands(this.bot.clientId, this.bot.guildId),
-        {
-          body: [slashCommand.toJSON()],
-        }
-      );
-      console.log("Successfully registered application commands.");
-    } catch (error) {
-      console.error("Error registering commands:", error);
-    }
-
-    // コマンドの実行
-    client.on(Events.InteractionCreate, this.handleInteraction);
   }
 
   async handleInteraction(interaction: Interaction<CacheType>) {
     const { ai } = this.bot;
+
     if (!interaction.isChatInputCommand()) {
       return;
     }

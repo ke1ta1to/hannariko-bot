@@ -2,6 +2,8 @@ import { GoogleGenAI } from "@google/genai";
 import { Client, Events, GatewayIntentBits, REST } from "discord.js";
 import "dotenv/config";
 import { HistoryCommand } from "./commands/history";
+import { TalkCommand } from "./commands/talk";
+import { CommandBase } from "./commands/command-base";
 
 export class HannarikoBot {
   public readonly client: Client;
@@ -39,8 +41,13 @@ async function main() {
   }
 
   const bot = new HannarikoBot(token, clientId, guildId, googleApiKey);
-  new HistoryCommand(bot);
-  bot.client.login(token);
+  const commands = [
+    new TalkCommand(bot).getSlashCommand(),
+    new HistoryCommand(bot).getSlashCommand(),
+  ];
+  await CommandBase.registerCommand(commands, bot);
+
+  await bot.client.login(token);
 }
 
 main();
