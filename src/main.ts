@@ -4,6 +4,7 @@ import "dotenv/config";
 import { HistoryCommand } from "./commands/history";
 import { TalkCommand } from "./commands/talk";
 import { CommandBase } from "./commands/command-base";
+import { TwitterDuplicateDetector } from "./features/twitter-duplicate-detector";
 
 export class HannarikoBot {
   public readonly client: Client;
@@ -17,7 +18,11 @@ export class HannarikoBot {
     public readonly geminiApiKey: string
   ) {
     this.client = new Client({
-      intents: [GatewayIntentBits.Guilds],
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+      ],
     });
     this.rest = new REST().setToken(token);
     this.ai = new GoogleGenAI({
@@ -46,6 +51,10 @@ async function main() {
     new HistoryCommand(bot).getSlashCommand(),
   ];
   await CommandBase.registerCommand(commands, bot);
+
+  // Twitter duplicate detectorの初期化
+  const twitterDetector = new TwitterDuplicateDetector(bot);
+  await twitterDetector.initialize();
 
   await bot.client.login(token);
 }
