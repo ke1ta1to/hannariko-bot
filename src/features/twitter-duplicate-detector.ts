@@ -58,14 +58,26 @@ export class TwitterDuplicateDetector {
         // 重複の場合
         await this.database.incrementPostCount(tweetId);
 
+        // 元のメッセージリンクを生成
+        let warningMessage = "⚠️ deprecated! このリンクは既に投稿されています";
+        
+        if (existingLink.message_id && existingLink.channel_id) {
+          const guildId = message.guild?.id;
+          if (guildId) {
+            const messageLink = `https://discord.com/channels/${guildId}/${existingLink.channel_id}/${existingLink.message_id}`;
+            warningMessage += `\n元の投稿: ${messageLink}`;
+          }
+        }
+
         // 警告メッセージを送信
-        await message.reply("⚠️ deprecated! このリンクは既に投稿されています");
+        await message.reply(warningMessage);
       } else {
         // 新規の場合はデータベースに記録
         await this.database.insert({
           tweet_id: tweetId,
           first_posted_by: message.author.id,
           channel_id: message.channel.id,
+          message_id: message.id,
         });
       }
     } catch (error) {

@@ -7,6 +7,7 @@ export interface TwitterLink {
   first_posted_at?: Date;
   first_posted_by: string;
   channel_id: string;
+  message_id: string;
   post_count?: number;
 }
 
@@ -28,6 +29,7 @@ export class TwitterLinksDatabase {
                     first_posted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     first_posted_by TEXT NOT NULL,
                     channel_id TEXT NOT NULL,
+                    message_id TEXT,
                     post_count INTEGER DEFAULT 1
                 );
             `,
@@ -35,14 +37,25 @@ export class TwitterLinksDatabase {
           if (err) {
             reject(err);
           } else {
-            // Create index on tweet_id for better performance
+            // Add message_id column if it doesn't exist (for migration)
             this.db.run(
-              "CREATE INDEX IF NOT EXISTS idx_tweet_id ON twitter_links(tweet_id)",
-              (indexErr) => {
-                if (indexErr) {
-                  console.error("Failed to create index:", indexErr);
+              "ALTER TABLE twitter_links ADD COLUMN message_id TEXT",
+              (alterErr) => {
+                // Ignore error if column already exists
+                if (alterErr && !alterErr.message.includes("duplicate column name")) {
+                  console.error("Failed to add message_id column:", alterErr);
                 }
-                resolve();
+                
+                // Create index on tweet_id for better performance
+                this.db.run(
+                  "CREATE INDEX IF NOT EXISTS idx_tweet_id ON twitter_links(tweet_id)",
+                  (indexErr) => {
+                    if (indexErr) {
+                      console.error("Failed to create index:", indexErr);
+                    }
+                    resolve();
+                  }
+                );
               }
             );
           }
@@ -70,8 +83,8 @@ export class TwitterLinksDatabase {
   async insert(link: TwitterLink): Promise<void> {
     return new Promise((resolve, reject) => {
       this.db.run(
-        "INSERT INTO twitter_links (tweet_id, first_posted_by, channel_id) VALUES (?, ?, ?)",
-        [link.tweet_id, link.first_posted_by, link.channel_id],
+        "INSERT INTO twitter_links (tweet_id, first_posted_by, channel_id, message_id) VALUES (?, ?, ?, ?)",
+        [link.tweet_id, link.first_posted_by, link.channel_id, link.message_id],
         (err) => {
           if (err) {
             reject(err);
