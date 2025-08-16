@@ -3,6 +3,7 @@ import { Client, Events, GatewayIntentBits, REST } from "discord.js";
 import "dotenv/config";
 import { HistoryCommand } from "./commands/history";
 import { TalkCommand } from "./commands/talk";
+import { CuneiformCommand } from "./commands/cuneiform";
 import { CommandBase } from "./commands/command-base";
 import { TwitterDuplicateDetector } from "./features/twitter-duplicate-detector";
 
@@ -49,6 +50,7 @@ async function main() {
   const commands = [
     new TalkCommand(bot).getSlashCommand(),
     new HistoryCommand(bot).getSlashCommand(),
+    new CuneiformCommand(bot).getSlashCommand(),
   ];
   await CommandBase.registerCommand(commands, bot);
 
