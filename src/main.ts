@@ -4,6 +4,7 @@ import "dotenv/config";
 import { HistoryCommand } from "./commands/history";
 import { TalkCommand } from "./commands/talk";
 import { CuneiformCommand } from "./commands/cuneiform";
+import { OCRCommand } from "./commands/ocr";
 import { CommandBase } from "./commands/command-base";
 import { TwitterDuplicateDetector } from "./features/twitter-duplicate-detector";
 
@@ -51,6 +52,7 @@ async function main() {
     new TalkCommand(bot).getSlashCommand(),
     new HistoryCommand(bot).getSlashCommand(),
     new CuneiformCommand(bot).getSlashCommand(),
+    new OCRCommand(bot).getSlashCommand(),
   ];
   await CommandBase.registerCommand(commands, bot);
 
