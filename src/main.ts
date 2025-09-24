@@ -7,6 +7,7 @@ import { CuneiformCommand } from "./commands/cuneiform";
 import { OCRCommand } from "./commands/ocr";
 import { CommandBase } from "./commands/command-base";
 import { TwitterDuplicateDetector } from "./features/twitter-duplicate-detector";
+import { ThreeThreeFourGame } from "./features/three-three-four-game";
 
 export class HannarikoBot {
   public readonly client: Client;
@@ -59,6 +60,10 @@ async function main() {
   // Twitter duplicate detectorの初期化
   const twitterDetector = new TwitterDuplicateDetector(bot);
   await twitterDetector.initialize();
+
+  // 334ゲームの初期化
+  const threeThreeFourGame = new ThreeThreeFourGame(bot);
+  await threeThreeFourGame.initialize();
 
   await bot.client.login(token);
 }
