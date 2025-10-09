@@ -57,10 +57,13 @@ export class TwitterDuplicateDetector {
       if (existingLink) {
         // 重複の場合
         await this.database.incrementPostCount(tweetId);
+        const duplicateCount = await this.database.incrementUserDuplicateCount(
+          message.author.id
+        );
 
         // 元のメッセージリンクを生成
         let warningMessage = "⚠️ deprecated! このリンクは既に投稿されています";
-        
+
         if (existingLink.message_id && existingLink.channel_id) {
           const guildId = message.guild?.id;
           if (guildId) {
@@ -68,6 +71,8 @@ export class TwitterDuplicateDetector {
             warningMessage += `\n元の投稿: ${messageLink}`;
           }
         }
+
+        warningMessage += `\n${message.author.displayName} の累計重複回数: ${duplicateCount}回`;
 
         // 警告メッセージを送信
         await message.reply(warningMessage);

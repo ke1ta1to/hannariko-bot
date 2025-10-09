@@ -6,6 +6,7 @@ import { TalkCommand } from "./commands/talk";
 import { CuneiformCommand } from "./commands/cuneiform";
 import { OCRCommand } from "./commands/ocr";
 import { CommandBase } from "./commands/command-base";
+import { DeprecatedCommand } from "./commands/deprecated";
 import { TwitterDuplicateDetector } from "./features/twitter-duplicate-detector";
 import { ThreeThreeFourGame } from "./features/three-three-four-game";
 
@@ -54,6 +55,7 @@ async function main() {
     new HistoryCommand(bot).getSlashCommand(),
     new CuneiformCommand(bot).getSlashCommand(),
     new OCRCommand(bot).getSlashCommand(),
+    new DeprecatedCommand(bot).getSlashCommand(),
   ];
   await CommandBase.registerCommand(commands, bot);
 
