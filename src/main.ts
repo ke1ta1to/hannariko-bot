@@ -9,11 +9,13 @@ import { CommandBase } from "./commands/command-base";
 import { DeprecatedCommand } from "./commands/deprecated";
 import { TwitterDuplicateDetector } from "./features/twitter-duplicate-detector";
 import { ThreeThreeFourGame } from "./features/three-three-four-game";
+import { GeminiRateLimiter } from "./utils/gemini-rate-limiter";
 
 export class HannarikoBot {
   public readonly client: Client;
   public readonly rest: REST;
   public readonly ai: GoogleGenAI;
+  public readonly gemini: GeminiRateLimiter;
 
   constructor(
     public readonly token: string,
@@ -32,6 +34,7 @@ export class HannarikoBot {
     this.ai = new GoogleGenAI({
       apiKey: geminiApiKey,
     });
+    this.gemini = new GeminiRateLimiter(this.ai);
 
     this.client.once(Events.ClientReady, async (readyClient) => {
       console.log(`Ready! Logged in as ${readyClient.user.tag}`);

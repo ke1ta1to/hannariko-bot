@@ -114,7 +114,7 @@ export class TalkCommand extends CommandBase {
   ): Promise<string> {
     if (!this.conversationHistory) return "（会話履歴が見つかりません）";
 
-    const { ai } = this.bot;
+    const { gemini } = this.bot;
     const { topic, messages } = this.conversationHistory;
 
     // 現在の会話履歴を文字列に変換
@@ -173,7 +173,7 @@ ${historyText}
 
     try {
       // AI応答の生成
-      const response = await ai.models.generateContent({
+      const response = await gemini.generateContent({
         model: "gemini-2.0-flash",
         contents: prompt,
       });

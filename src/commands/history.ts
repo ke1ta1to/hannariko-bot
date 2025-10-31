@@ -35,7 +35,7 @@ export class HistoryCommand extends CommandBase {
   }
 
   async handleInteraction(interaction: Interaction<CacheType>) {
-    const { ai } = this.bot;
+    const { gemini } = this.bot;
 
     if (!interaction.isChatInputCommand()) {
       return;
@@ -104,7 +104,7 @@ ${JSON.stringify(authors, null, 2)}
 `;
 
       await interaction.deferReply();
-      const response = await ai.models.generateContent({
+      const response = await gemini.generateContent({
         model: "gemini-2.0-flash",
         contents: prompt,
       });

@@ -67,7 +67,7 @@ export class OCRCommand extends CommandBase {
       const buffer = Buffer.from(arrayBuffer);
 
       // Google Gemini AIで画像を解析
-      const { ai } = this.bot;
+      const { gemini } = this.bot;
 
       // プロンプトを構築
       let prompt = `以下の画像に含まれる文字を認識して、マークダウン形式で出力してください。
@@ -82,7 +82,7 @@ export class OCRCommand extends CommandBase {
         prompt += `\n\n追加の指示: ${additionalPrompt}`;
       }
 
-      const model = ai.models.generateContent({
+      const result = await gemini.generateContent({
         model: "gemini-2.0-flash",
         contents: [
           {
@@ -99,7 +99,6 @@ export class OCRCommand extends CommandBase {
         ],
       });
 
-      const result = await model;
       const text = result.text?.trim();
 
       if (!text) {
